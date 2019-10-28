@@ -1,3 +1,4 @@
+require('dotenv').config()
 const host = process.env.HOST || 'localhost';
 const port = process.env.PORT || '3000';
 const externalPort = process.env.EXTERNAL_PORT || port;

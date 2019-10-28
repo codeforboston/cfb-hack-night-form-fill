@@ -21,7 +21,7 @@ async function getCredentials() {
   }
 }
 
-async function requestCredentials() {
+async function requestCredentials(req) {
   debug('Requesting credentials');
   const response = await request({
     uri: 'https://secure.meetup.com/oauth2/access',
@@ -30,7 +30,7 @@ async function requestCredentials() {
       client_id: process.env.MEETUP_CLIENT_ID,
       client_secret: process.env.MEETUP_CLIENT_SECRET,
       grant_type: 'authorization_code',
-      redirect_uri: `${config.baseUrl}/auth/callback`,
+      redirect_uri: `${Config.baseUrl}/auth/callback`,
       code: req.query.code,
     },
     json: true,
@@ -73,7 +73,7 @@ async function refreshCredentials({refresh_token}) {
     });
 
     const { error, ...credentials } = response;
-  
+
     if (error) {
       throw new Error(error);
     }

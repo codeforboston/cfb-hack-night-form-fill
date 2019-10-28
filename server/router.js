@@ -14,7 +14,7 @@ const Config = require('../config');
 const { run } = require('../run');
 
 // Duration (in ms) for request data to remain in queue after completion/error
-const REQUEST_QUEUE_TTL = 10 * 1000 * 60; // 10 minutes
+const REQUEST_QUEUE_TTL = 10 * 1000 * 60; // 10 minutesf
 
 let requestNumber = 0;
 
@@ -32,7 +32,7 @@ router.route('/')
   .post(
     function(req, res, next) {
       const requestID = requestNumber++;
-      
+
       requestQueue[requestID] = {
         status: STATUSES.PROCESSING,
         startTime: Date.now(),
@@ -93,7 +93,7 @@ router.route('/queue/:requestID')
           'Expires',
           new Date(requestData.completionTime + REQUEST_QUEUE_TTL).toUTCString(),
         );
-        
+
         return res.send();
       }
       else if (requestData.status === STATUSES.SUCCEEDED) {
@@ -101,7 +101,7 @@ router.route('/queue/:requestID')
           'Expires',
           new Date(requestData.completionTime + REQUEST_QUEUE_TTL).toUTCString(),
         );
-        
+
         return res.send();
       }
       else if (requestData.status === STATUSES.FAILED) {
@@ -144,7 +144,7 @@ router.route("/auth/callback")
   .get(
     async (req, res) => {
       try {
-        await requestCredentials();
+        await requestCredentials(req);
         res.send('Authentication credentials validated. You may close this page.');
       }
       catch (ex) {
