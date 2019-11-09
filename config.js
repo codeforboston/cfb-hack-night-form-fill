@@ -7,7 +7,7 @@ const config = {
   host,
   port,
   externalPort,
-  baseUrl: `http://${host}:${externalPort}`,
+  baseUrl: host === 'localhost' ? `http://${host}:${externalPort}` : `https://${host}:${externalPort}`,
   meetup: {
     clientId: process.env.MEETUP_CLIENT_ID,
     clientSecret: process.env.MEETUP_CLIENT_SECRET,

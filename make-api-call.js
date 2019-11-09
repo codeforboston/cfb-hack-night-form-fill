@@ -38,6 +38,7 @@ async function requestCredentials(req) {
 
   const { error, ...credentials } = response;
 
+  console.log(credentials);
   if (error) {
     throw new Error(error);
   }
