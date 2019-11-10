@@ -13,7 +13,7 @@ Script to fill out a Google form for Code for Boston Weekly Hack Nights.
 
 Since the Meetup.com API requires OAuth2.0, you will need to generate credentials to connect. You can do this by starting the server with `npm run server` and going to http://localhost:3000/auth (update port/host as needed). It should present you with a web dialog asking you to authorize the script. Once you give permission, it should tell you that everything went well and you can close the tab (if everything succeeded--make sure to set up your Meetup API client ID and secret first).
 
-Once you've generated credentials, you shouldn't need to do it again--credentials are stored in a JSON file (not the most secure method, but no less secure than storing an API key in plaintext), including a refresh token that the app should be able to use to update credentials without user intervention.
+Once you've generated credentials, you shouldn't need to do it again--take the key in the log and write the credentials as `MEETUP_REFRESHTOKEN` config variable, including a refresh token that the app should be able to use to update credentials without user intervention.
 
 ## Running
 
