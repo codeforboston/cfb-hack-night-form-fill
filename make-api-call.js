@@ -1,24 +1,19 @@
-const path = require('path');
 const request = require('request-promise');
 const debug = require('debug')('hack-night-form-fill:make-api-call');
-const {promisify} = require('util');
-const fs = require('fs');
-const readFile = promisify(fs.readFile);
-const writeFile = promisify(fs.writeFile);
-const credentialsFilePath = path.join(__dirname, 'server', 'credentials', 'credentials.json');
 const {
   UNAUTHORIZED,
 } = require('http-status-codes');
 const Config = require('./config');
 
 async function getCredentials() {
-  try {
-    const credentialsJSON = await readFile(credentialsFilePath);
-    return JSON.parse(credentialsJSON);
+  if (!process.env.MEETUP_TEMPACCESSTOKEN || !process.env.MEETUP_REFRESHTOKEN) {
+    throw new Error(`No available credentials; go to ${Config.baseUrl}/auth and set as constants from log`);
   }
-  catch(ex) {
-    throw new Error(`No available credentials; go to ${Config.baseUrl}/auth`);
-  }
+  const credentialsJSON = {
+    'access_token': process.env.MEETUP_TEMPACCESSTOKEN,
+    'refresh_token': process.env.MEETUP_REFRESHTOKEN,
+  };
+  return credentialsJSON;
 }
 
 async function requestCredentials(req) {
@@ -38,21 +33,12 @@ async function requestCredentials(req) {
 
   const { error, ...credentials } = response;
 
+  console.log(credentials);
   if (error) {
     throw new Error(error);
   }
 
-  await writeFile(
-    credentialsFilePath,
-    JSON.stringify({
-      ...credentials,
-      expires_at: Date.now() + (credentials.expires_in * 1000),
-    }),
-    {
-      encoding: 'utf8',
-    }
-  );
-  debug('Wrote credentials file');
+  debug('Fetched credentials');
 
   return credentials;
 }
@@ -78,17 +64,7 @@ async function refreshCredentials({refresh_token}) {
       throw new Error(error);
     }
 
-    await writeFile(
-      credentialsFilePath,
-      JSON.stringify({
-        ...credentials,
-        expires_at: Date.now() + (credentials.expires_in * 1000),
-      }),
-      {
-        encoding: 'utf8',
-      }
-    );
-    debug('Wrote new credentials file');
+    debug('Refreshed credentials for this session')
 
     return credentials;
   }
@@ -102,7 +78,7 @@ async function callAPIMethod({
   qs,
   ...requestArgs
 }) {
-  let credentials = await getCredentials();
+  let credentials = await getCredentials()
 
   const getResponse = async () => {
     return request({
